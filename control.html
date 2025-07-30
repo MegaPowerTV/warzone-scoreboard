@@ -84,7 +84,14 @@
     };
 
     const controls = document.getElementById('controls');
-    const targetWindow = window.open("index.html", "scoreboard");
+   let targetWindow = null;
+window.addEventListener('message', (e) => {
+  if (e.data === 'ready') {
+    targetWindow = e.source;
+    console.log('Connected to scoreboard window.');
+  }
+});
+
 
     keys.forEach(key => {
       const box = document.createElement('div');
