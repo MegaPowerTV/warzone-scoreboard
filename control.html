@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scoreboard Control Panel</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 20px;
+    }
+
+    .category {
+      background: #222;
+      border: 1px solid #333;
+      padding: 15px;
+      border-radius: 10px;
+      min-width: 200px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+    }
+
+    .category h3 {
+      margin: 0 0 10px;
+      color: #00bfff;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #00bfff;
+      color: black;
+    }
+
+    #resetAllBtn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 15px 25px;
+      font-size: 18px;
+      background: #b30000;
+      border-radius: 10px;
+    }
+
+    #resetAllBtn:hover {
+      background: #ff4444;
+    }
+  </style>
+</head>
+<body>
+  <h2>Warzone Scoreboard Control</h2>
+  <div class="controls" id="controls"></div>
+  <button id="resetAllBtn" onclick="resetAll()">Reset All Scores</button>
+
+  <script>
+    const keys = ['wins', 'gulag', 'cheating', 'boogie'];
+    const labels = {
+      wins: 'Wins',
+      gulag: 'Gulag Wins',
+      cheating: "He's Cheating",
+      boogie: 'Boogie Juice'
+    };
+
+    const controls = document.getElementById('controls');
+    const targetWindow = window.open("index.html", "scoreboard");
+
+    keys.forEach(key => {
+      const box = document.createElement('div');
+      box.className = 'category';
+      box.innerHTML = `
+        <h3>${labels[key]}</h3>
+        <button onclick="send('${key}', 'increment')">+1</button>
+        <button onclick="send('${key}', 'decrement')">-1</button>
+        <button onclick="send('${key}', 'reset')">Reset</button>
+      `;
+      controls.appendChild(box);
+    });
+
+    function send(key, type) {
+      if (targetWindow) {
+        targetWindow.postMessage({ key, type }, "*");
+      } else {
+        alert("Scoreboard window not open.");
+      }
+    }
+
+    function resetAll() {
+      keys.forEach(key => send(key, 'reset'));
+    }
+  </script>
+</body>
+</html>

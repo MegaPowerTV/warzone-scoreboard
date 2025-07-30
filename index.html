@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Warzone Scoreboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background: url('assets/warzone_bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      z-index: -1;
+      animation: slowZoom 30s ease-in-out infinite alternate;
+      opacity: 0.8;
+      filter: brightness(0.8) contrast(1.1);
+    }
+
+    @keyframes slowZoom {
+      from { transform: scale(1); }
+      to   { transform: scale(1.1); }
+    }
+
+    #scoreboard {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      font-family: 'Share Tech Mono', monospace;
+      color: #00bfff;
+      font-size: 2.5em;
+      text-shadow: 0 0 10px #00bfff;
+    }
+
+    .score-box {
+      position: absolute;
+      padding: 10px 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      border: 1px solid #00bfff;
+    }
+
+    .top-left    { top: 20px; left: 20px; }
+    .top-right   { top: 20px; right: 20px; }
+    .bottom-left { bottom: 20px; left: 20px; }
+    .bottom-right{ bottom: 20px; right: 20px; }
+
+    .label {
+      display: block;
+      font-size: 0.8em;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div id="scoreboard">
+    <div class="score-box top-left">
+      <span class="label">Wins</span>
+      <span class="count" id="wins">0</span>
+    </div>
+    <div class="score-box top-right">
+      <span class="label">Gulag Wins</span>
+      <span class="count" id="gulag">0</span>
+    </div>
+    <div class="score-box bottom-left">
+      <span class="label">He's Cheating</span>
+      <span class="count" id="cheating">0</span>
+    </div>
+    <div class="score-box bottom-right">
+      <span class="label">Boogie Juice</span>
+      <span class="count" id="boogie">0</span>
+    </div>
+  </div>
+
+  <audio id="scoreSound" src="assets/placeholder.mp3" preload="auto"></audio>
+
+  <script>
+    const counts = {
+      wins: parseInt(localStorage.getItem('wins') || '0'),
+      gulag: parseInt(localStorage.getItem('gulag') || '0'),
+      cheating: parseInt(localStorage.getItem('cheating') || '0'),
+      boogie: parseInt(localStorage.getItem('boogie') || '0'),
+    };
+
+    function updateDisplay() {
+      for (const key in counts) {
+        document.getElementById(key).textContent = counts[key];
+      }
+    }
+
+    window.addEventListener('message', (event) => {
+      const { type, key } = event.data;
+      if (counts.hasOwnProperty(key)) {
+        if (type === 'increment') counts[key]++;
+        if (type === 'decrement') counts[key]--;
+        if (type === 'reset') counts[key] = 0;
+
+        localStorage.setItem(key, counts[key]);
+        updateDisplay();
+
+        const sound = document.getElementById('scoreSound');
+        sound.currentTime = 0;
+        sound.play();
+      }
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html> 
