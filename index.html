@@ -91,6 +91,9 @@
       gulag: parseInt(localStorage.getItem('gulag') || '0'),
       cheating: parseInt(localStorage.getItem('cheating') || '0'),
       boogie: parseInt(localStorage.getItem('boogie') || '0'),
+      // Let control panel know this page is ready
+window.opener?.postMessage('ready', '*');
+
     };
 
     function updateDisplay() {
